@@ -1,8 +1,8 @@
-"""Optional browser checks. Requires Playwright and a locally installed Chrome.
+"""Optional browser verification for the static NTN template.
 
-Run a local HTTP server first, then:
-  python scripts/verify_page.py --url http://127.0.0.1:8000
-The website itself has no Python or Playwright dependency.
+Requires Playwright and Chrome; the website itself has no build dependencies.
+Start a local HTTP server, then run:
+    python scripts/verify_page.py --url http://127.0.0.1:8000
 """
 import argparse
 import asyncio
@@ -15,108 +15,95 @@ from playwright.async_api import async_playwright
 async def verify(args):
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
-    checks = []
-    errors = []
-    failed_requests = []
+    errors, failures, external_requests, checks = [], [], [], []
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch(
-            executable_path=args.chrome,
-            headless=True,
+            executable_path=args.chrome, headless=True,
             args=['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
         )
-        context = await browser.new_context(viewport={'width': 1440, 'height': 1080}, device_scale_factor=1, reduced_motion='reduce')
-        await context.grant_permissions(['clipboard-read', 'clipboard-write'])
+        context = await browser.new_context(
+            viewport={'width': 1440, 'height': 1000}, device_scale_factor=1,
+            reduced_motion='reduce', permissions=['clipboard-read', 'clipboard-write'],
+        )
         page = await context.new_page()
         page.on('pageerror', lambda error: errors.append(str(error)))
-        page.on('response', lambda response: failed_requests.append(f'{response.status} {response.url}') if response.status >= 400 else None)
+        page.on('response', lambda r: failures.append(f'{r.status}: {r.url}') if r.status >= 400 else None)
+        page.on('request', lambda r: external_requests.append(r.url) if not r.url.startswith(args.url.rstrip('/') + '/') else None)
         await page.goto(args.url, wait_until='networkidle')
         await page.evaluate('document.fonts.ready')
-        assert await page.title() == 'Grounding Driving VLA via Inverse Kinematics'
-        assert await page.locator('#example-delta').inner_text() == '−10.57 m'
-        assert await page.locator('#mean-delta').inner_text() == '−1.04 m'
-        assert await page.locator('#trajectory-chart polyline').count() == 2
-        checks.append('Initial paper metadata and actual saved trajectory values')
+        assert await page.locator('h1').inner_text() == 'Grounding Driving VLA\nvia Inverse Kinematics'
+        assert await page.locator('table').count() == 3
+        assert '92.2' in await page.locator('#navsim-table .ours-row').inner_text()
+        assert '90.6' in await page.locator('#navsim-table .ours-row').inner_text()
+        assert await page.locator('#nuscenes-table .ours-row td').all_text_contents() == ['0.04', '0.06', '0.10', '0.06']
+        assert '−1.04 m' in await page.locator('#intervention-table .ours-row').inner_text()
+        checks.append('Title, three HTML tables, and key paper metrics')
 
-        for scene in ['0', '1']:
-            await page.select_option('#scene-select', scene)
-            for variant in ['Near', 'Far', 'VeryFar', 'Sky', 'SkyFar']:
-                await page.click(f'[data-variant="{variant}"]')
-                assert await page.locator(f'[data-variant="{variant}"]').get_attribute('aria-pressed') == 'true'
-                await page.wait_for_function("document.querySelector('#scene-after').complete && document.querySelector('#scene-after').naturalWidth > 0")
-                assert await page.locator('#trajectory-chart circle').count() == 14
-        await page.select_option('#scene-select', '1')
-        await page.click('[data-variant="Near"]')
-        assert await page.locator('#example-delta').inner_text() == '−17.15 m'
-        await page.locator('#comparison-range').fill('75')
-        assert '75 percent original' in await page.locator('#comparison-range').get_attribute('aria-valuetext')
-        assert await page.locator('#image-comparison').evaluate("element => element.style.getPropertyValue('--split')") == '75%'
-        checks.append('All 10 scene/placement combinations, saved waypoints, image loading, and comparison slider')
+        # Check every local link/resource, including links not loaded by the initial render.
+        references = await page.evaluate("""() => [...document.querySelectorAll('[href], [src], [poster]')]
+          .flatMap(el => ['href', 'src', 'poster'].map(attr => el.getAttribute(attr)).filter(Boolean))""")
+        for ref in set(references):
+            if ref.startswith('#'):
+                assert await page.locator(ref).count() == 1, ref
+            elif not ref.startswith(('https:', 'http:', 'mailto:', 'data:')):
+                response = await context.request.head(args.url.rstrip('/') + '/' + ref)
+                assert response.ok, f'{ref}: {response.status}'
+        checks.append('All section anchors, images, font/style/script links, PDF, videos, and captions resolve')
 
-        await page.click('#tab-v2')
-        assert await page.locator('#panel-v2').is_visible()
-        assert not await page.locator('#panel-v1').is_visible()
-        assert await page.locator('#panel-v2 .ours .chart-value').inner_text() == '90.6'
-        await page.locator('#tab-v2').press('ArrowRight')
-        assert await page.locator('#panel-nuscenes').is_visible()
-        assert await page.locator('#panel-nuscenes .ours .chart-value').inner_text() == '0.06'
-        await page.locator('#tab-nuscenes').press('Home')
-        assert await page.locator('#tab-v1').get_attribute('aria-selected') == 'true'
-        checks.append('Benchmark values, tab selection, and keyboard navigation')
+        for key, duration in [('overview', 162), ('driving', 40), ('counterfactual', 36)]:
+            selector = f'#{key}-video'
+            await page.locator(selector).scroll_into_view_if_needed()
+            await page.locator(selector).evaluate('(video) => video.load()')
+            await page.wait_for_function('(id) => document.getElementById(id).readyState >= 2', arg=f'{key}-video', timeout=20000)
+            actual = await page.locator(selector).evaluate('(video) => video.duration')
+            assert abs(actual - duration) < 1, (key, actual)
+            await page.locator(selector).evaluate('(video) => video.play()')
+            await page.wait_for_function('(id) => document.getElementById(id).currentTime > 0.1', arg=f'{key}-video')
+            await page.locator(selector).evaluate('(video) => video.pause()')
+            await page.wait_for_function('(id) => document.getElementById(id).querySelector("track").readyState === 2', arg=f'{key}-video')
+        checks.append('Three independent native videos play and load English captions')
 
-        for key, duration in [('driving', 40), ('counterfactual', 36), ('overview', 162)]:
-            await page.click(f'[data-video="{key}"]')
-            await page.evaluate("document.querySelector('video').load()")
-            await page.wait_for_function("document.querySelector('video').readyState >= 2", timeout=20000)
-            assert abs(await page.evaluate("document.querySelector('video').duration") - duration) < 1
-            assert await page.locator('#video-download').get_attribute('href') == f'assets/media/{key}.mp4'
-            await page.evaluate("document.querySelector('video').play()")
-            await page.wait_for_function("document.querySelector('video').currentTime > 0.1")
-            await page.evaluate("document.querySelector('video').pause()")
-            await page.wait_for_function("document.querySelector('video track').readyState === 2", timeout=10000)
-        checks.append('All three videos decode/play with the expected duration and load English caption tracks')
-
-        await page.click('#copy-citation')
+        await page.click('#copy-bibtex')
         clipboard = await page.evaluate('navigator.clipboard.readText()')
-        assert '@misc{park2026grounding' in clipboard and 'Park, Junsung and Shim, Hyunjung' in clipboard
-        checks.append('BibTeX clipboard copy')
+        assert clipboard == await page.locator('#bibtex-code').text_content()
+        checks.append('BibTeX clipboard copy reads the editable HTML citation')
 
-        await page.select_option('#scene-select', '0')
-        await page.click('[data-variant="Near"]')
-        await page.locator('#comparison-range').fill('45')
-        await page.goto(args.url, wait_until='networkidle')
-        await page.evaluate('document.fonts.ready')
+        await page.reload(wait_until='networkidle')
         for width in [1440, 1024, 768, 390, 375, 320]:
             await page.set_viewport_size({'width': width, 'height': 1000})
-            await page.evaluate("document.activeElement.blur(); window.scrollTo({top: 0, behavior: 'instant'})")
-            await page.wait_for_timeout(150)
-            overflow = await page.evaluate('document.documentElement.scrollWidth > window.innerWidth')
-            assert not overflow, f'Horizontal overflow at {width}px'
+            assert not await page.evaluate('document.documentElement.scrollWidth > innerWidth'), width
             if width in [1440, 390]:
-                # Trigger deferred figure loads before the full-page capture.
-                await page.locator('#citation').scroll_into_view_if_needed()
-                await page.wait_for_timeout(350)
-                await page.evaluate("document.activeElement.blur(); window.scrollTo({top: 0, behavior: 'instant'})")
-                await page.wait_for_function('window.scrollY === 0')
+                # Load figures that are below the fold before taking screenshots.
+                for img in await page.locator('img').all():
+                    await img.scroll_into_view_if_needed()
+                    await img.evaluate('(img) => img.decode()')
+                await page.evaluate('document.activeElement.blur(); window.scrollTo(0, 0)')
+                await page.evaluate('document.fonts.ready')
                 await page.screenshot(path=str(output / f'page-{width}.png'), full_page=True)
                 await page.screenshot(path=str(output / f'hero-{width}.png'))
-        checks.append('No horizontal overflow at 320, 375, 390, 768, 1024, and 1440 px; desktop/mobile screenshots')
-        broken = await page.locator('img').evaluate_all('(images) => images.filter(image => image.complete && !image.naturalWidth).map(image => image.src)')
-        assert not broken, broken
+        checks.append('No page overflow at six viewport widths, including 320 px; desktop/mobile screenshots')
         assert not errors, errors
-        assert not failed_requests, failed_requests
-        checks.append('No browser JavaScript errors, HTTP errors, or broken loaded images')
-
+        assert not failures, failures
+        assert not external_requests, external_requests
+        checks.append('No JavaScript errors, HTTP errors, or external runtime dependencies')
         await context.close()
-        nojs = await browser.new_context(java_script_enabled=False)
-        static = await nojs.new_page()
-        await static.goto(args.url, wait_until='networkidle')
-        assert await static.locator('h1').is_visible()
-        await static.locator('.results-table-details summary').click()
-        assert await static.locator('.ours-row').is_visible()
-        checks.append('Without JavaScript, paper content and the numerical table remain accessible')
+
+        # Ease of editing is the main requirement: no JS-generated paper content.
+        nojs = await browser.new_context(java_script_enabled=False, viewport={'width': 390, 'height': 900})
+        page = await nojs.new_page()
+        await page.goto(args.url, wait_until='networkidle')
+        assert await page.locator('#abstract').is_visible()
+        for table_id in ['navsim-table', 'nuscenes-table', 'intervention-table']:
+            assert await page.locator(f'#{table_id}').is_visible()
+        assert await page.locator('video[controls]').count() == 3
+        assert await page.locator('#copy-bibtex').is_hidden()
+        assert not await page.evaluate('document.documentElement.scrollWidth > innerWidth')
+        checks.append('All content, results, and native video controls are available with JavaScript disabled')
         await nojs.close()
         await browser.close()
-    result = {'passed': True, 'checks': checks, 'console_errors': errors, 'http_errors': failed_requests}
+
+    result = {'passed': True, 'template': 'NTN / Academic Project Page Template', 'checks': checks,
+              'console_errors': errors, 'http_errors': failures, 'external_requests': external_requests}
     (output / 'verification.json').write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps(result, indent=2))
 
@@ -125,5 +112,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--url', default='http://127.0.0.1:8000')
     parser.add_argument('--chrome', default='/usr/bin/google-chrome')
-    parser.add_argument('--output', default='/tmp/driving-vla-page-verification')
+    parser.add_argument('--output', default='/tmp/driveik-ntn-verification')
     asyncio.run(verify(parser.parse_args()))

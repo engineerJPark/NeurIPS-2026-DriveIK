@@ -12,7 +12,10 @@
   "benchmark_sources": [
     "tables/navsim_v1_exp.tex",
     "tables/navsim_v2_exp.tex",
-    "tables/main_exp.tex"
+    "tables/main_exp.tex",
+    "tables/stitching_exp.tex"
   ],
-  "publication_status": "Preprint; no conference acceptance or public code URL is asserted."
+  "publication_status": "Preprint; no conference acceptance or public code URL is asserted.",
+  "presentation": "Static NTN/Bulma template. Original scientific figures and three existing videos are shown; benchmark values are directly editable HTML table cells.",
+  "template": "https://engineerjpark.github.io/CVPR2025NTN/"
 }

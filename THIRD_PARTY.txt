@@ -1,0 +1,28 @@
+Template attribution
+====================
+This website adapts the structure and styles of Junsung Park's NTN project page:
+https://engineerjpark.github.io/CVPR2025NTN/
+https://github.com/engineerJPark/CVPR2025NTN
+
+That page uses the Academic Project Page Template by Eliahu Horwitz:
+https://github.com/eliahuhorwitz/Academic-project-page-template
+It was adapted from the Nerfies project page:
+https://nerfies.github.io/
+
+The website template is licensed under Creative Commons Attribution-ShareAlike 4.0:
+https://creativecommons.org/licenses/by-sa/4.0/
+This adaptation changes the research content to Grounding Driving VLA via Inverse
+Kinematics, adds plain HTML research tables and separate native video players,
+self-hosts fonts, and replaces unused template scripts with a BibTeX copy helper.
+Template licensing does not override the separate licenses of included dependencies
+or source research materials.
+
+Bundled dependencies
+====================
+Bulma 0.9.1: copied from the NTN page's static/css/bulma.min.css.
+License: MIT. Full notice: static/licenses/bulma-MIT.txt.
+
+Google Sans and Noto Sans: served by Google Fonts, bundled locally.
+License: SIL Open Font License 1.1. Full notices:
+static/licenses/GoogleSans-OFL.txt
+static/licenses/NotoSans-OFL.txt

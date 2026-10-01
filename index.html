@@ -1,114 +1,495 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f9f9f6">
-  <meta name="description" content="Grounding Driving VLA via Inverse Kinematics. A 0.5B camera-only driving model that plans through current and predicted future visual states. Research by Junsung Park and Hyunjung Shim, KAIST.">
-  <meta property="og:title" content="Grounding Driving VLA via Inverse Kinematics">
-  <meta property="og:description" content="Make the scene matter. Visually grounded trajectory planning with a 0.5B backbone.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/media/overview-poster.webp">
+
+  <!--
+    EDIT MAP — 이 파일에서 내용 전체를 직접 수정할 수 있습니다.
+    01. 제목 / 저자 / 소속 / 링크     02. Abstract / 기여
+    03. 방법 그림 / 설명             04. 소개 영상
+    05. 정량 결과표                  06. 정성 결과 / 영상
+    07. BibTeX                       08. 템플릿 출처
+
+    글자 크기, 여백, 그림 너비: static/css/index.css
+    그림 / 영상 / 논문: assets/figures, assets/media, assets/paper.pdf
+    별도 빌드나 JavaScript 데이터 수정이 필요하지 않습니다.
+  -->
+
+  <!-- 검색 / 공유용 정보: 제목을 변경하면 이 부분도 함께 수정하세요. -->
   <title>Grounding Driving VLA via Inverse Kinematics</title>
+  <meta name="description" content="Grounding Driving VLA via Inverse Kinematics. Camera-only trajectory planning through current and predicted future visual states, with a 0.5B language backbone. Junsung Park and Hyunjung Shim, KAIST.">
+  <meta name="keywords" content="autonomous driving, vision language action, visual grounding, inverse kinematics, DriveIK, KAIST">
+  <link rel="canonical" href="https://engineerjpark.github.io/NeurIPS-2026-DriveIK/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Grounding Driving VLA via Inverse Kinematics">
+  <meta property="og:description" content="A 0.5B camera-only driving model that plans through current and predicted future visual states.">
+  <meta property="og:url" content="https://engineerjpark.github.io/NeurIPS-2026-DriveIK/">
+  <meta property="og:image" content="https://engineerjpark.github.io/NeurIPS-2026-DriveIK/assets/media/overview-poster.webp">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Grounding Driving VLA via Inverse Kinematics">
+  <meta name="twitter:description" content="Visually grounded trajectory planning with a 0.5B language backbone.">
+  <meta name="twitter:image" content="https://engineerjpark.github.io/NeurIPS-2026-DriveIK/assets/media/overview-poster.webp">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-  <link rel="preload" as="font" type="font/ttf" href="assets/fonts/Inter-Regular.ttf" crossorigin>
-  <link rel="stylesheet" href="styles.css">
-  <script src="assets/data/experiments.js" defer></script>
-  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="static/css/fonts.css">
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <!-- 복사 버튼만 JavaScript를 사용합니다. 본문은 JavaScript 없이도 표시됩니다. -->
+  <script src="static/js/index.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header">
-    <div class="nav-wrap">
-      <a class="wordmark" href="#" aria-label="Driving VLA home"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M5 24 10 4M23 24 18 4M14 23v-5m0-5V9m0-4V3"/></svg>Driving VLA<span class="wordmark-slash">/</span><span class="wordmark-sub">Visual grounding</span></a>
-      <nav aria-label="Main navigation"><a href="#approach">Approach</a><a href="#results">Results</a><a href="#videos">Videos</a><a class="nav-paper" href="assets/paper.pdf" target="_blank" rel="noopener">Paper <span aria-hidden="true">↗</span></a></nav>
-    </div>
-  </header>
+  <a class="skip-link" href="#abstract">Skip to content</a>
+  <main>
+    <!-- ================================================================
+         01. TITLE / AUTHORS / LINKS — 제목, 저자, 소속, 공개 링크
+         ================================================================ -->
+    <section class="hero" aria-labelledby="paper-title">
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column has-text-centered">
+              <h1 class="title is-1 publication-title" id="paper-title">
+                Grounding Driving VLA<br>
+                via Inverse Kinematics
+              </h1>
+              <div class="is-size-5 publication-authors">
+                <span class="author-block">
+                  <a href="https://engineerjpark.github.io/" target="_blank" rel="noopener">Junsung Park</a>,
+                </span>
+                <span class="author-block">
+                  <a href="https://scholar.google.com/citations?user=KB5XZGIAAAAJ&amp;hl=en" target="_blank" rel="noopener">Hyunjung Shim</a>
+                </span>
+              </div>
+              <div class="is-size-5 publication-authors publication-affiliation">
+                <span class="author-block">KAIST<br>2026 Preprint</span>
+              </div>
 
-  <main id="main">
-    <section class="hero container" aria-labelledby="paper-title">
-      <div class="eyebrow"><span class="status-dot"></span> Autonomous driving <span class="eyebrow-divider">/</span> 2026 preprint</div>
-      <h1 id="paper-title">Grounding Driving VLA<br><span>via Inverse Kinematics</span></h1>
-      <p class="hero-description">Predict the future scene.<br class="mobile-break"> Ground the driving plan in what changes.</p>
-      <div class="authors"><a href="mailto:jshackist@kaist.ac.kr">Junsung Park</a><span aria-hidden="true">·</span><a href="mailto:kateshim@kaist.ac.kr">Hyunjung Shim</a></div>
-      <p class="affiliation">KAIST <span aria-hidden="true">/</span> Kim Jaechul Graduate School of AI</p>
-      <div class="hero-actions"><a class="button primary" href="assets/paper.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.5h7l3 3V17H5zM12 2.5V6h3M8 10h4M8 13h4"/></svg>Read the paper <span aria-hidden="true">↗</span></a><a class="button secondary" href="#videos"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 9 6-9 6z"/></svg>Watch the overview <span class="button-time">2:42</span></a><a class="text-link" href="#citation">BibTeX <span aria-hidden="true">↓</span></a></div>
-      <div class="hero-tags"><span>0.5B backbone</span><span>Camera-only input</span><span>Visual-state-conditioned planning</span></div>
-    </section>
-
-    <section class="experiment-section container" id="experiment" aria-labelledby="experiment-title">
-      <div class="experiment-heading"><div><p class="eyebrow">Counterfactual visual grounding</p><h2 id="experiment-title">Change the scene. Does the plan change?</h2></div><span class="interactive-label"><span class="status-dot"></span> Interactive experiment</span></div>
-      <p class="section-intro experiment-intro">Insert a vehicle while holding non-visual inputs fixed. Explore how our model’s predicted trajectory responds.</p>
-      <div class="experiment-card">
-        <div class="experiment-toolbar"><div class="experiment-tabs" role="group" aria-label="Obstacle placement"><button type="button" class="active" data-variant="Near" aria-pressed="true">Near</button><button type="button" data-variant="Far" aria-pressed="false">Far</button><button type="button" data-variant="VeryFar" aria-pressed="false">Very far</button><button type="button" data-variant="Sky" aria-pressed="false">Sky</button><button type="button" data-variant="SkyFar" aria-pressed="false">Sky · size matched</button></div><label class="scene-picker">Scene <select id="scene-select"><option value="0">Entrance road</option><option value="1">Urban road</option></select></label></div>
-        <div class="experiment-view">
-          <div class="camera-panel">
-            <div class="panel-heading"><span><i class="tiny-square"></i> Front camera</span><span>nuScenes · selected example</span></div>
-            <div class="image-comparison" id="image-comparison">
-              <img id="scene-before" src="assets/scenes/scene-1-original.webp" alt="Original front-camera view of an entrance road" width="1600" height="900" fetchpriority="high">
-              <img id="scene-after" class="after-image" src="assets/scenes/scene-1-stitched_Near.webp" alt="Same entrance road with a vehicle inserted near the ego vehicle" width="1600" height="900">
-              <span class="image-tag original-tag">Original</span><span class="image-tag inserted-tag">Obstacle inserted</span>
-              <div class="comparison-divider" aria-hidden="true"><span>‹ ›</span></div>
-              <input id="comparison-range" type="range" min="0" max="100" value="45" aria-label="Compare original and obstacle-inserted images" aria-valuetext="45 percent original image, 55 percent obstacle-inserted image">
+              <div class="publication-links">
+                <!-- Paper: PDF를 교체하거나 공개된 arXiv PDF 주소로 변경하세요. -->
+                <span class="link-block">
+                  <a class="button is-normal is-rounded is-dark" href="assets/paper.pdf" target="_blank" rel="noopener">
+                    <span class="icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/></svg>
+                    </span>
+                    <span>Paper</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a class="button is-normal is-rounded is-dark" href="#video-overview">
+                    <span class="icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/></svg>
+                    </span>
+                    <span>Video</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a class="button is-normal is-rounded is-dark" href="#bibtex">
+                    <span class="icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M9 5H7v5l-2 2 2 2v5h2M15 5h2v5l2 2-2 2v5h-2"/></svg>
+                    </span>
+                    <span>BibTeX</span>
+                  </a>
+                </span>
+                <!-- Code / arXiv 버튼 추가: 위 link-block 하나를 복사해
+                     href와 버튼 글자만 바꾸세요. 실제 공개 주소를 사용하세요. -->
+              </div>
             </div>
-            <p class="comparison-hint"><span aria-hidden="true">↔</span> Drag to compare <span id="placement-label">Vehicle placed directly ahead</span></p>
           </div>
-          <div class="trajectory-panel"><div class="panel-heading"><span>Our predicted trajectory</span><span>3 s horizon</span></div><svg id="trajectory-chart" viewBox="0 0 300 350" role="img" aria-labelledby="trajectory-title trajectory-description"><title id="trajectory-title">Trajectory before and after obstacle insertion</title><desc id="trajectory-description">Saved predictions averaged over 50 samples. The near obstacle shortens the endpoint range in this selected example.</desc></svg><div class="plot-legend"><span><i class="line before"></i>Original</span><span><i class="line after"></i>Inserted</span></div></div>
         </div>
-        <div class="experiment-readout" aria-live="polite" aria-atomic="true"><div><span class="readout-label">This example · endpoint range change</span><strong id="example-delta">−10.57 <small>m</small></strong></div><div><span class="readout-label">Dataset mean · same intervention</span><strong id="mean-delta">−1.04 <small>m</small></strong></div><p id="experiment-insight">A near-range obstacle produces a shorter predicted travel distance.</p></div>
       </div>
-      <p class="figure-note">Exact saved predictions (K = 50 means); two illustrative scenes. Dataset means use 6,019 frames. Negative change means a shorter 3 s endpoint range, not a measured braking rate. Far and “Sky · size matched” use the same sprite scale. <a href="assets/paper.pdf#page=35" target="_blank" rel="noopener">See the paper’s spatial intervention analysis ↗</a></p>
-      <noscript><p class="noscript-note">Enable JavaScript to explore obstacle placements and trajectories. The <a href="assets/figures/stitching.pdf">original paper figure</a> and all videos remain available.</p></noscript>
     </section>
 
-    <section class="highlights container" aria-label="Key results">
-      <div class="stat"><span class="stat-label">NAVSIM-v1 · PDMS ↑</span><strong>92.2</strong><span><b>+19.0 points</b> over matched baseline</span></div>
-      <div class="stat"><span class="stat-label">NAVSIM-v2 · EPDMS ↑</span><strong>90.6</strong><span><b>+20.4 points</b> over matched baseline</span></div>
-      <div class="stat"><span class="stat-label">nuScenes · Avg. L2 ↓</span><strong>0.06 <small>m</small></strong><span>ST-P3 evaluation protocol</span></div>
-      <div class="stat"><span class="stat-label">Language backbone</span><strong>0.5 <small>B</small></strong><span>Qwen2.5 · three front cameras</span></div>
-    </section>
-
-    <section class="abstract-section" id="abstract">
-      <div class="container abstract-layout"><div><p class="eyebrow">The central idea</p><h2>Seeing should<br>shape planning.</h2><span class="section-index">01 / Motivation</span></div><div class="abstract-copy"><p class="lead">A camera input does not guarantee a visually grounded driving policy.</p><p>Counterfactual obstacle insertion reveals <strong>blind planning</strong>: representative Driving VLAs can predict nearly the same trajectory even when a vehicle appears directly ahead. Ego status and route commands provide a shortcut on ego-predictable training examples.</p><p>We make visual states the interface to action. The language model predicts a future visual state; a separate <strong>Inverse Kinematics Network</strong> generates a trajectory conditioned only on the current and predicted future visual states. Visual prediction supplies dense supervision, while the architecture removes direct ego-status and text inputs from trajectory decoding.</p><details class="abstract-details"><summary>Read the full abstract <span aria-hidden="true">+</span></summary><p>Counterfactual obstacle insertion exposes blind planning in representative Driving VLAs: their trajectories remain largely unchanged despite a vehicle appearing directly ahead. An empirically calibrated bias–variance analysis identifies how ego-predictable training examples admit a shortcut through ego status and commands. We address this failure with an inverse-kinematics-inspired architecture that anchors trajectory decoding on current and predicted future visual states. First, a next visual state prediction objective that requires the LLM to predict the future visual scene provides dense visual supervision and suppresses shortcut paths. Second, a separate Inverse Kinematics Network (a cross-attention-based conditional diffusion model) that takes only the current and future visual states as input is designed to suppress reliance on ego status and textual shortcuts during trajectory decoding. Our 0.5B model achieves state-of-the-art trajectory planning performance on NAVSIM-v1, NAVSIM-v2, and nuScenes using cameras alone, without LiDAR or a BEV encoder. Against the matched OpenDriveVLA* baseline, it improves NAVSIM PDMS and EPDMS by 19.0 and 20.4 points, respectively. Controlled ablations and intervention analyses support improved use of visual features, with additional benefits from future-state prediction in dynamic situations such as turning.</p></details></div></div>
-    </section>
-
-    <section class="section container" id="approach" aria-labelledby="approach-title">
-      <div class="section-heading"><div><p class="eyebrow">02 / Approach</p><h2 id="approach-title">From visual states to actions.</h2></div><p class="heading-aside">An explicit visual interface<br>between understanding and planning.</p></div>
-      <div class="method-steps"><article><span class="step-number">01</span><h3>Observe the present</h3><p>DINOv3 encodes the three front-camera views into current visual tokens.</p><span class="step-token">Current state <i>V<sub>t</sub></i></span></article><article><span class="step-number">02</span><h3>Predict the future</h3><p>The LLM uses visual tokens, ego context, and route instructions to predict future visual tokens, supervised by the actual future scene.</p><span class="step-token">Predicted state <i>V̂<sub>t+Δ</sub></i></span></article><article><span class="step-number">03</span><h3>Connect them with a plan</h3><p>A cross-attention diffusion network decodes the trajectory using only the pair of visual states as conditioning inputs.</p><span class="step-token">IK Network <span aria-hidden="true">→</span> Trajectory</span></article></div>
-      <figure class="paper-figure"><a href="assets/figures/methods.pdf" target="_blank" rel="noopener" aria-label="Open full-resolution model architecture figure"><img src="assets/figures/methods.webp" alt="Model architecture: three camera views pass through a visual encoder to an LLM, which predicts future visual tokens and scene answers. Current and predicted future visual tokens condition the diffusion IK Network to generate a trajectory." width="2400" height="966" loading="lazy"><span class="figure-expand">Open full-resolution figure ↗</span></a><figcaption>The IK Network receives current and predicted future visual states. Ego status and commands guide future-state prediction through the LLM, with no direct path into the trajectory decoder.</figcaption></figure>
-      <div class="method-note"><span class="note-icon" aria-hidden="true">↳</span><p><strong>Why “inverse kinematics”?</strong> The term expresses the idea of inferring a trajectory between a start and a target visual state. It is an architectural analogy, rather than a strict vehicle-dynamics solver.</p></div>
-    </section>
-
-    <section class="results-section" id="results" aria-labelledby="results-title"><div class="section container">
-      <div class="section-heading"><div><p class="eyebrow">03 / Evaluation</p><h2 id="results-title">Strong planning. Small backbone.</h2></div><p class="heading-aside">Camera-only inference.<br>No LiDAR or BEV encoder in our model.</p></div>
-      <div class="benchmark-tabs" role="tablist" aria-label="Evaluation benchmark"><button id="tab-v1" type="button" role="tab" aria-selected="true" aria-controls="panel-v1" data-benchmark="v1">NAVSIM-v1 <span>PDMS ↑</span></button><button id="tab-v2" type="button" role="tab" aria-selected="false" aria-controls="panel-v2" data-benchmark="v2" tabindex="-1">NAVSIM-v2 <span>EPDMS ↑</span></button><button id="tab-nuscenes" type="button" role="tab" aria-selected="false" aria-controls="panel-nuscenes" data-benchmark="nuscenes" tabindex="-1">nuScenes <span>Avg. L2 ↓</span></button></div>
-      <div id="benchmark-panels">
-        <section class="benchmark-panel" id="panel-v1" role="tabpanel" aria-labelledby="tab-v1" tabindex="0"><div class="benchmark-summary"><span class="eyebrow">NAVSIM-v1</span><h3>A 19-point gain<br>at the same scale.</h3><p>Our full model scores 92.2 PDMS with a 0.5B backbone. The matched OpenDriveVLA* baseline scores 73.2.</p><div class="benchmark-callout">73.2 <span aria-hidden="true">→</span> <strong>92.2</strong></div><p class="metric-note">PDMS · higher is better<br>Ours: SFT → GRPO</p></div><div class="benchmark-chart"><p class="chart-title">Selected camera-based VLAs <span>PDMS / 100</span></p><div class="chart-rows" data-chart="v1"></div></div></section>
-        <section class="benchmark-panel" id="panel-v2" role="tabpanel" aria-labelledby="tab-v2" tabindex="0"><div class="benchmark-summary"><span class="eyebrow">NAVSIM-v2</span><h3>Visual grounding<br>across benchmarks.</h3><p>Our full model scores 90.6 EPDMS, improving by 20.4 points over the matched 0.5B baseline.</p><div class="benchmark-callout">70.2 <span aria-hidden="true">→</span> <strong>90.6</strong></div><p class="metric-note">EPDMS · higher is better<br>Ours: SFT → GRPO</p></div><div class="benchmark-chart"><p class="chart-title">Selected camera-based VLAs <span>EPDMS / 100</span></p><div class="chart-rows" data-chart="v2"></div></div></section>
-        <section class="benchmark-panel" id="panel-nuscenes" role="tabpanel" aria-labelledby="tab-nuscenes" tabindex="0"><div class="benchmark-summary"><span class="eyebrow">nuScenes validation</span><h3>Precise open-loop<br>trajectory prediction.</h3><p>Average L2 error of 0.06 m under the ST-P3 protocol. Under the UniAD protocol, our average L2 error is 0.13 m.</p><div class="benchmark-callout"><strong>0.06</strong> <small>m</small></div><p class="metric-note">Average L2 error · lower is better<br>ST-P3 protocol · 1 s, 2 s, 3 s</p></div><div class="benchmark-chart"><p class="chart-title">Selected camera-based VLAs <span>Avg. L2 (m) ↓</span></p><div class="chart-rows" data-chart="nuscenes"></div></div></section>
+    <!-- ================================================================
+         02. ABSTRACT / KEY CONTRIBUTIONS — 본문과 기여를 직접 수정
+         ================================================================ -->
+    <section class="section hero is-light" id="abstract" aria-labelledby="abstract-title">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3" id="abstract-title">Abstract</h2>
+            <div class="content has-text-justified">
+              <p>
+                Counterfactual obstacle insertion exposes blind planning in representative
+                Driving VLAs: their trajectories remain largely unchanged despite a vehicle
+                appearing directly ahead. An empirically calibrated bias–variance analysis
+                identifies how ego-predictable training examples admit a shortcut through
+                ego status and commands. We address this failure with an
+                inverse-kinematics-inspired architecture that anchors trajectory decoding
+                on current and predicted future visual states.
+                First, a next visual state prediction objective that requires the LLM to
+                predict the future visual scene provides dense visual supervision and
+                suppresses shortcut paths. Second, a separate Inverse Kinematics Network
+                (a cross-attention-based conditional diffusion model) that takes only the
+                current and future visual states as input is designed to suppress reliance
+                on ego status and textual shortcuts during trajectory decoding.
+                Our 0.5B model achieves state-of-the-art trajectory planning performance
+                on NAVSIM-v1, NAVSIM-v2, and nuScenes using cameras alone, without LiDAR
+                or a BEV encoder. Against the matched OpenDriveVLA* baseline, it improves
+                NAVSIM PDMS and EPDMS by 19.0 and 20.4 points, respectively.
+                Controlled ablations and intervention analyses support improved use of
+                visual features, with additional benefits from future-state prediction
+                in dynamic situations such as turning.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="contributions">
+          <h2 class="title is-3 has-text-centered">Key Contributions</h2>
+          <ul class="contribution-list">
+            <li>
+              <span aria-hidden="true">⏩</span>
+              <span>
+                <strong>Diagnosing blind planning.</strong>
+                Controlled visual interventions reveal that representative Driving VLAs
+                can retain nearly identical trajectories after an obstacle is inserted.
+                A bias–variance analysis characterizes the ego-status shortcut under an
+                empirically calibrated majority-regime assumption.
+              </span>
+            </li>
+            <li>
+              <span aria-hidden="true">⏩</span>
+              <span>
+                <strong>Grounding actions in visual states.</strong>
+                Next visual state prediction provides dense visual supervision. An
+                Inverse Kinematics Network decodes trajectories from only the current
+                and predicted future visual states, removing direct ego-status and
+                command inputs from the trajectory decoder.
+              </span>
+            </li>
+            <li>
+              <span aria-hidden="true">⏩</span>
+              <span>
+                <strong>Strong performance with a 0.5B backbone.</strong>
+                Using three front cameras, our model achieves 92.2 PDMS on NAVSIM-v1,
+                90.6 EPDMS on NAVSIM-v2, and 0.06 m average L2 error on nuScenes under
+                the ST-P3 evaluation protocol.
+              </span>
+            </li>
+          </ul>
+        </div>
       </div>
-      <p class="figure-note benchmark-note">Results reported in the supplied paper. OpenDriveVLA* on NAVSIM shares training data, hyperparameters, backbone scale, and the SFT → GRPO schedule with our model; the next-state objective and IK Network differ. The nuScenes OpenDriveVLA result is the reported original baseline, not the NAVSIM matched variant.</p>
-      <details class="results-table-details"><summary>View numerical comparison <span aria-hidden="true">+</span></summary><div class="table-scroll"><table><caption>Selected methods reported in the paper. A dash means not included in this comparison.</caption><thead><tr><th scope="col">Method</th><th scope="col">Backbone</th><th scope="col">NAVSIM-v1<br>PDMS ↑</th><th scope="col">NAVSIM-v2<br>EPDMS ↑</th><th scope="col">nuScenes<br>Avg. L2 (m) ↓</th></tr></thead><tbody><tr><th scope="row">OpenDriveVLA* / OpenDriveVLA</th><td>0.5B</td><td>73.2</td><td>70.2</td><td>0.35</td></tr><tr><th scope="row">AutoVLA</th><td>3B</td><td>89.1</td><td>—</td><td>—</td></tr><tr><th scope="row">ReCogDrive</th><td>2B</td><td>89.6</td><td>83.6</td><td>—</td></tr><tr><th scope="row">DriveVLA-W0</th><td>7B</td><td>90.2</td><td>86.5</td><td>—</td></tr><tr><th scope="row">DriveFine</th><td>8B</td><td>91.8</td><td>89.7</td><td>—</td></tr><tr><th scope="row">Impromptu-VLA</th><td>3B</td><td>—</td><td>—</td><td>0.30</td></tr><tr><th scope="row">Ours (SFT)</th><td>0.5B</td><td>90.3</td><td>89.3</td><td>—</td></tr><tr class="ours-row"><th scope="row">Ours</th><td>0.5B</td><td>92.2</td><td>90.6</td><td>0.06</td></tr></tbody></table></div></details>
-    </div></section>
-
-    <section class="section container" id="videos" aria-labelledby="videos-title">
-      <div class="section-heading"><div><p class="eyebrow">04 / In motion</p><h2 id="videos-title">See the model respond.</h2></div><p class="heading-aside">The idea, the interventions,<br>and the driving examples.</p></div>
-      <div class="video-selector" role="group" aria-label="Select research video"><button type="button" class="active" aria-pressed="true" data-video="overview"><span>01</span> Research overview <small>2:42</small></button><button type="button" aria-pressed="false" data-video="driving"><span>02</span> Driving examples <small>0:40</small></button><button type="button" aria-pressed="false" data-video="counterfactual"><span>03</span> Obstacle interventions <small>0:36</small></button></div>
-      <div class="video-frame"><video id="research-video" controls playsinline preload="none" poster="assets/media/overview-poster.webp" width="1920" height="840" aria-label="Research overview video"><source src="assets/media/overview.mp4" type="video/mp4"><track kind="captions" src="assets/media/overview.vtt" srclang="en" label="English" default>Your browser does not support embedded video. <a href="assets/media/overview.mp4">Download the overview.</a></video></div>
-      <div class="video-footer"><p id="video-description">A silent, captioned walkthrough of the motivation, visual-state architecture, and experimental results.</p><a id="video-download" href="assets/media/overview.mp4" download>Download video <span aria-hidden="true">↓</span></a></div>
-      <p class="figure-note">Driving clips are selected qualitative examples, with interpolated playback between available camera frames and saved predictions. Clip-level errors are distinct from dataset-level benchmark metrics. Architecture and token-flow animations are explanatory.</p>
-      <noscript><p><a href="assets/media/driving.mp4">Driving examples (MP4)</a> · <a href="assets/media/counterfactual.mp4">Obstacle interventions (MP4)</a></p></noscript>
     </section>
 
-    <section class="evidence-section container" aria-labelledby="evidence-title"><div class="section-heading"><div><p class="eyebrow">05 / Visual grounding</p><h2 id="evidence-title">Looking beyond the benchmark score.</h2></div></div><div class="evidence-grid"><article class="evidence-copy"><h3>Visual changes influence the trajectory.</h3><p>In the obstacle-stitching experiment, our model has a 63.8% deceleration ratio and a −1.04 m average displacement change. The reported baseline changes are much smaller.</p><dl class="response-comparison"><div><dt>Impromptu-VLA · 3B</dt><dd>−0.00 m</dd></div><div><dt>Alpamayo-R1 · 10B</dt><dd>−0.12 m</dd></div><div><dt>OpenDriveVLA · 0.5B</dt><dd>−0.06 m</dd></div><div class="ours-response"><dt>Ours · 0.5B</dt><dd>−1.04 m</dd></div></dl><p class="figure-note">nuScenes validation · obstacle stitching experiment. Average displacement change as reported in the paper; negative indicates a shorter predicted endpoint range.</p></article><figure class="evidence-figure"><a href="assets/figures/stitching.pdf" target="_blank" rel="noopener"><img src="assets/figures/stitching.webp" loading="lazy" width="2400" height="1230" alt="Three obstacle insertion examples from the paper. Existing VLA trajectories before and after insertion largely overlap, while ours changes its predicted path."></a><figcaption>Original and inserted images with before/after trajectories. <a href="assets/figures/stitching.pdf" target="_blank" rel="noopener">Open figure ↗</a></figcaption></figure></div></section>
+    <!-- ================================================================
+         03. OVERALL METHODS — 그림의 src / alt와 설명을 수정
+         그림 너비는 static/css/index.css의 --figure-width에서 설정
+         ================================================================ -->
+    <section class="section" id="methods" aria-labelledby="methods-title">
+      <div class="container figure-container">
+        <h2 class="title is-3 has-text-centered" id="methods-title">Overall Methods</h2>
+        <figure class="research-figure">
+          <a href="assets/figures/methods.pdf" target="_blank" rel="noopener" aria-label="Open the full-resolution architecture figure">
+            <img
+              src="assets/figures/methods.webp"
+              alt="The visual encoder extracts current visual states from three front cameras. The LLM predicts future visual states. The IK Network conditions on these two visual states to generate a trajectory."
+              width="2400" height="966" loading="lazy">
+          </a>
+          <figcaption>
+            <strong>Overview of our model.</strong> The vision encoder extracts current
+            visual tokens from three front cameras. The LLM predicts the future visual
+            state and answers driving-scene questions. The Inverse Kinematics Network
+            generates a trajectory conditioned only on the current and predicted future
+            visual states.
+          </figcaption>
+        </figure>
+        <div class="content method-description">
+          <p>
+            Ego status and route commands guide future-state prediction through the LLM,
+            while the trajectory decoder has no direct access to them. The IK Network is
+            a cross-attention conditional diffusion model, with trajectory-loss gradients
+            stopped at its visual conditioning inputs.
+          </p>
+          <p>
+            “Inverse kinematics” describes the idea of inferring a trajectory between
+            a start and a target visual state; it is an architectural analogy rather
+            than a strict vehicle-dynamics formulation.
+          </p>
+        </div>
+      </div>
+    </section>
 
-    <section class="citation-section" id="citation"><div class="container citation-layout"><div><p class="eyebrow">Build on this work</p><h2>Citation</h2><p>Grounding Driving VLA<br>via Inverse Kinematics</p><a class="text-link" href="assets/paper.pdf" target="_blank" rel="noopener">Read the full paper <span aria-hidden="true">↗</span></a></div><div class="citation-box"><div class="citation-toolbar"><span>BibTeX</span><div><a href="assets/citation.bib" download>Download .bib</a><button id="copy-citation" type="button">Copy citation</button></div></div><pre><code id="citation-text">@misc{park2026grounding,
+    <!-- ================================================================
+         04. VIDEO OVERVIEW — 영상 / 포스터 / 자막 파일을 각각 지정
+         ================================================================ -->
+    <section class="section is-light-section" id="video-overview" aria-labelledby="video-title">
+      <div class="container figure-container">
+        <h2 class="title is-3 has-text-centered" id="video-title">Video Overview</h2>
+        <figure class="research-figure">
+          <video
+            id="overview-video" class="research-video"
+            controls playsinline preload="none"
+            poster="assets/media/overview-poster.webp"
+            width="1920" height="840" aria-label="Research overview">
+            <source src="assets/media/overview.mp4" type="video/mp4">
+            <track kind="captions" src="assets/media/overview.vtt" srclang="en" label="English" default>
+            <a href="assets/media/overview.mp4">Download the overview video.</a>
+          </video>
+          <figcaption>
+            A 2:42 silent, captioned overview of the motivation, architecture, and results.
+            Architecture and token-flow animations are explanatory.
+            <a href="assets/media/overview.mp4" download>Download video</a>.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         05. QUANTITATIVE RESULTS — 일반 HTML 표, 숫자를 여기서 직접 수정
+         행 추가: <tr> ... </tr> 블록 하나를 복사하세요.
+         ================================================================ -->
+    <section class="section" id="results" aria-labelledby="results-title">
+      <div class="container is-max-desktop">
+        <h2 class="title is-3 has-text-centered" id="results-title">Quantitative Results</h2>
+        <h3 class="title is-4 has-text-centered">NAVSIM</h3>
+        <p class="section-description">
+          Our 0.5B model improves over the matched OpenDriveVLA* baseline by
+          <strong>19.0 PDMS</strong> and <strong>20.4 EPDMS</strong> points.
+          Selected camera-based VLA comparisons from the paper are shown below.
+        </p>
+        <div class="table-container" role="region" aria-label="NAVSIM comparison table, scroll horizontally on small screens" tabindex="0">
+          <table class="table is-fullwidth research-table" id="navsim-table">
+            <caption>NAVSIM-v1 and NAVSIM-v2. Higher scores are better.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Method</th>
+                <th scope="col">Backbone size</th>
+                <th scope="col">NAVSIM-v1<br>PDMS ↑</th>
+                <th scope="col">NAVSIM-v2<br>EPDMS ↑</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">OpenDriveVLA*</th>
+                <td>0.5B</td><td>73.2</td><td>70.2</td>
+              </tr>
+              <tr>
+                <th scope="row">AutoVLA</th>
+                <td>3B</td><td>89.1</td><td>—</td>
+              </tr>
+              <tr>
+                <th scope="row">ReCogDrive</th>
+                <td>2B</td><td>89.6</td><td>83.6</td>
+              </tr>
+              <tr>
+                <th scope="row">DriveVLA-W0</th>
+                <td>7B</td><td>90.2</td><td>86.5</td>
+              </tr>
+              <tr>
+                <th scope="row">DriveFine</th>
+                <td>8B</td><td>91.8</td><td>89.7</td>
+              </tr>
+              <tr>
+                <th scope="row">Ours (SFT)</th>
+                <td>0.5B</td><td>90.3</td><td>89.3</td>
+              </tr>
+              <tr class="ours-row">
+                <th scope="row">Ours (SFT → GRPO)</th>
+                <td>0.5B</td><td><strong>92.2</strong></td><td><strong>90.6</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="result-note">
+          OpenDriveVLA* shares the backbone scale, training data, hyperparameters, and
+          SFT → GRPO schedule with our full model; the next visual state objective and
+          IK Network differ. Our model uses perspective-camera features without LiDAR
+          or a BEV encoder. A dash indicates a result not included in this comparison.
+        </p>
+
+        <h3 class="title is-4 has-text-centered subsection-title">nuScenes</h3>
+        <div class="table-container" role="region" aria-label="nuScenes comparison table, scroll horizontally on small screens" tabindex="0">
+          <table class="table is-fullwidth research-table" id="nuscenes-table">
+            <caption>nuScenes validation, ST-P3 protocol. L2 error in meters; lower is better.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Method</th>
+                <th scope="col">1 s ↓</th>
+                <th scope="col">2 s ↓</th>
+                <th scope="col">3 s ↓</th>
+                <th scope="col">Average ↓</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">DriveVLM</th>
+                <td>0.18</td><td>0.34</td><td>0.68</td><td>0.40</td>
+              </tr>
+              <tr>
+                <th scope="row">EMMA</th>
+                <td>0.14</td><td>0.29</td><td>0.54</td><td>0.32</td>
+              </tr>
+              <tr>
+                <th scope="row">OpenDriveVLA-0.5B</th>
+                <td>0.15</td><td>0.32</td><td>0.57</td><td>0.35</td>
+              </tr>
+              <tr>
+                <th scope="row">OpenDriveVLA-7B</th>
+                <td>0.15</td><td>0.31</td><td>0.55</td><td>0.33</td>
+              </tr>
+              <tr>
+                <th scope="row">Impromptu-VLA-3B</th>
+                <td>0.13</td><td>0.27</td><td>0.52</td><td>0.30</td>
+              </tr>
+              <tr class="ours-row">
+                <th scope="row">Ours-0.5B</th>
+                <td><strong>0.04</strong></td><td><strong>0.06</strong></td>
+                <td><strong>0.10</strong></td><td><strong>0.06</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="result-note">
+          The nuScenes OpenDriveVLA results are reported original baselines, not the
+          NAVSIM matched variant. Under the separate UniAD evaluation protocol, our
+          average L2 error is 0.13 m. See the paper for full metrics and comparisons.
+        </p>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         06. QUALITATIVE RESULTS — 각 그림 / 영상이 독립된 블록입니다.
+         필요한 블록을 복사하거나 삭제해 결과를 추가 / 제거할 수 있습니다.
+         ================================================================ -->
+    <section class="section is-light-section" id="qualitative" aria-labelledby="qualitative-title">
+      <div class="container figure-container">
+        <h2 class="title is-3 has-text-centered" id="qualitative-title">Qualitative Results</h2>
+        <h3 class="title is-4 has-text-centered">Counterfactual Obstacle Insertion</h3>
+        <figure class="research-figure">
+          <a href="assets/figures/stitching.pdf" target="_blank" rel="noopener" aria-label="Open the full-resolution obstacle-insertion figure">
+            <img
+              src="assets/figures/stitching.webp"
+              alt="Three original and obstacle-inserted camera views. Before and after trajectories largely overlap for the representative VLA baselines; our model changes its predicted trajectory."
+              width="2400" height="1230" loading="lazy">
+          </a>
+          <figcaption>
+            <strong>Does a visual change alter the plan?</strong>
+            A vehicle is inserted into the front-camera image while non-visual inputs
+            are held fixed. Green and red trajectories show predictions before and
+            after insertion. The selected examples illustrate the responses of
+            representative Driving VLAs and our model.
+          </figcaption>
+        </figure>
+        <div class="table-container compact-table" role="region" aria-label="Obstacle-insertion results table, scroll horizontally on small screens" tabindex="0">
+          <table class="table is-fullwidth research-table" id="intervention-table">
+            <caption>Obstacle stitching on nuScenes validation, as reported in the paper.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Model</th>
+                <th scope="col">Deceleration ratio</th>
+                <th scope="col">Avg. displacement change</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Impromptu-VLA 3B</th><td>38.8%</td><td>−0.00 m</td>
+              </tr>
+              <tr>
+                <th scope="row">Alpamayo-R1 10B</th><td>54.5%</td><td>−0.12 m</td>
+              </tr>
+              <tr>
+                <th scope="row">OpenDriveVLA 0.5B</th><td>44.2%</td><td>−0.06 m</td>
+              </tr>
+              <tr class="ours-row">
+                <th scope="row">Ours 0.5B</th><td><strong>63.8%</strong></td><td><strong>−1.04 m</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="result-note">
+          Negative displacement change indicates a shorter predicted 3 s endpoint range,
+          not a measured braking rate. These aggregate results are distinct from
+          the individual examples shown in the figure and videos.
+        </p>
+
+        <!-- 영상 1: 주행 예시 -->
+        <h3 class="title is-4 has-text-centered subsection-title">Driving Examples</h3>
+        <figure class="research-figure">
+          <video
+            id="driving-video" class="research-video"
+            controls playsinline preload="none"
+            poster="assets/media/driving-poster.webp"
+            width="1920" height="840" aria-label="Qualitative driving examples">
+            <source src="assets/media/driving.mp4" type="video/mp4">
+            <track kind="captions" src="assets/media/driving.vtt" srclang="en" label="English" default>
+            <a href="assets/media/driving.mp4">Download the driving examples.</a>
+          </video>
+          <figcaption>
+            Left-turn, right-turn, urban, and nighttime examples comparing saved
+            baseline and model predictions. Playback is interpolated between available
+            camera frames and saved predictions. Clip-level errors are not dataset-level
+            benchmark averages.
+            <a href="assets/media/driving.mp4" download>Download video</a>.
+          </figcaption>
+        </figure>
+
+        <!-- 영상 2: 장애물 위치 / 크기 개입 -->
+        <h3 class="title is-4 has-text-centered subsection-title">Obstacle Position and Scale</h3>
+        <figure class="research-figure">
+          <video
+            id="counterfactual-video" class="research-video"
+            controls playsinline preload="none"
+            poster="assets/media/counterfactual-poster.webp"
+            width="1920" height="840" aria-label="Obstacle position and scale interventions">
+            <source src="assets/media/counterfactual.mp4" type="video/mp4">
+            <track kind="captions" src="assets/media/counterfactual.vtt" srclang="en" label="English" default>
+            <a href="assets/media/counterfactual.mp4">Download the intervention video.</a>
+          </video>
+          <figcaption>
+            Near, far, and sky insertions with exact saved predictions averaged over
+            K = 50 samples. Two illustrative scenes are distinguished from the dataset
+            means over 6,019 frames. Far and the size-matched sky insertion use the
+            same sprite scale.
+            <a href="assets/media/counterfactual.mp4" download>Download video</a>.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         07. BIBTEX — 아래 내용과 assets/citation.bib를 함께 수정
+         ================================================================ -->
+    <section class="section" id="bibtex" aria-labelledby="bibtex-title">
+      <div class="container is-max-desktop">
+        <h2 class="title is-3" id="bibtex-title">BibTeX</h2>
+        <div class="citation-actions">
+          <a class="button is-small" href="assets/citation.bib" download>Download .bib</a>
+          <button class="button is-small" id="copy-bibtex" type="button" hidden>Copy BibTeX</button>
+          <span id="copy-status" class="copy-status" role="status"></span>
+        </div>
+        <pre class="bibtex-code"><code id="bibtex-code">@misc{park2026grounding,
   title  = {Grounding Driving VLA via Inverse Kinematics},
   author = {Park, Junsung and Shim, Hyunjung},
   year   = {2026},
   note   = {Preprint}
-}</code></pre><span id="copy-status" class="sr-only" role="status"></span></div></div></section>
+}</code></pre>
+      </div>
+    </section>
   </main>
-  <footer class="site-footer container"><span>Grounding Driving VLA <span class="footer-dot">·</span> 2026</span><span>Junsung Park &amp; Hyunjung Shim <span class="footer-dot">/</span> KAIST</span><a href="#">Back to top ↑</a></footer>
+
+  <!-- ================================================================
+       08. TEMPLATE CREDIT — 원본 템플릿의 출처 / 라이선스 링크 유지
+       ================================================================ -->
+  <footer class="footer">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-10">
+          <div class="content">
+            <p>
+              This page adapts the layout of
+              <a href="https://engineerjpark.github.io/CVPR2025NTN/" target="_blank" rel="noopener">NTN</a>,
+              built with the
+              <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noopener">Academic Project Page Template</a>,
+              which was adapted from the
+              <a href="https://nerfies.github.io/" target="_blank" rel="noopener">Nerfies</a> project page.
+              The website template is licensed under
+              <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="license noopener">CC BY-SA 4.0</a>.
+              This adaptation replaces the research content, simplifies the page scripts,
+              and hosts the template styles and fonts locally.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

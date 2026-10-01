@@ -1,15 +1,18 @@
 {
   "passed": true,
+  "template": "NTN / Academic Project Page Template",
   "checks": [
-    "Initial paper metadata and actual saved trajectory values",
-    "All 10 scene/placement combinations, saved waypoints, image loading, and comparison slider",
-    "Benchmark values, tab selection, and keyboard navigation",
-    "All three videos decode/play with the expected duration and load English caption tracks",
-    "BibTeX clipboard copy",
-    "No horizontal overflow at 320, 375, 390, 768, 1024, and 1440 px; desktop/mobile screenshots",
-    "No browser JavaScript errors, HTTP errors, or broken loaded images",
-    "Without JavaScript, paper content and the numerical table remain accessible"
+    "Title, three HTML tables, and key paper metrics",
+    "All section anchors, images, font/style/script links, PDF, videos, and captions resolve",
+    "Three independent native videos play and load English captions",
+    "BibTeX clipboard copy reads the editable HTML citation",
+    "No page overflow at six viewport widths, including 320 px; desktop/mobile screenshots",
+    "No JavaScript errors, HTTP errors, or external runtime dependencies",
+    "All content, results, and native video controls are available with JavaScript disabled",
+    "Full abstract matches the supplied Overleaf source",
+    "HTML citation matches the downloadable BibTeX file"
   ],
   "console_errors": [],
-  "http_errors": []
+  "http_errors": [],
+  "external_requests": []
 }

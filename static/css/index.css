@@ -1,0 +1,236 @@
+/* NTN / Academic Project Page Template adaptation.
+ * Content: ../../index.html
+ * Framework: bulma.min.css (leave this vendor file unchanged)
+ * Editable design settings and site overrides are all in this file.
+ */
+
+/* 1. 자주 수정하는 설정: 본문 / 그림 너비, 글자 크기, 여백, 색상 */
+:root {
+  --page-width: 960px;
+  --figure-width: 1040px;
+  --body-size: 16px;
+  --title-size: 48px;
+  --section-space: 3rem;
+  --light-background: #f5f5f5;
+  --author-color: #209cee;
+  --ours-background: #edf4ff;
+}
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: var(--body-size);
+}
+
+html { scroll-padding-top: 1.5rem; }
+[hidden] { display: none !important; }
+
+a:focus-visible,
+button:focus-visible,
+video:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--author-color);
+  outline-offset: 4px;
+}
+
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 1rem;
+  z-index: 10;
+  background: white;
+  padding: 0.75rem 1rem;
+}
+
+.skip-link:focus { top: 1rem; }
+
+/* 2. NTN과 같은 중앙 정렬 제목 / 저자 / 둥근 링크 버튼 */
+.container.is-max-desktop { max-width: var(--page-width); }
+.figure-container { max-width: var(--figure-width); }
+
+.publication-title,
+.publication-authors {
+  font-family: 'Google Sans', sans-serif;
+}
+
+.publication-title.title {
+  font-size: var(--title-size);
+  line-height: 1.125;
+  overflow-wrap: break-word;
+}
+
+.publication-authors a { color: var(--author-color); }
+.publication-authors a:hover { text-decoration: underline; }
+.author-block { display: inline-block; }
+.publication-affiliation { margin-top: 0.25rem; }
+.publication-links { margin-top: 1rem; }
+
+.link-block {
+  display: inline-block;
+  margin: 0.25rem 0.1rem;
+}
+
+.link-block svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 3. 본문 섹션 / Abstract / Key Contributions */
+.section { padding: var(--section-space) 1.5rem; }
+.is-light-section { background: var(--light-background); }
+
+.content p,
+.contribution-list,
+.section-description {
+  line-height: 1.65;
+}
+
+.contributions {
+  max-width: 800px;
+  margin: 2rem auto 0;
+}
+
+.contribution-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contribution-list li {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.subsection-title.title { margin-top: 3rem; }
+
+.section-description {
+  margin: 0 auto 1.5rem;
+  max-width: 800px;
+  text-align: center;
+}
+
+/* 4. 그림 / 영상: 각각 HTML에서 파일만 교체하면 됩니다. */
+.research-figure { margin: 0; }
+
+.research-figure img,
+.research-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+
+.research-video {
+  background: #101827;
+  aspect-ratio: 16 / 7;
+}
+
+.research-figure figcaption {
+  margin: 1rem auto 0;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  text-align: left;
+  max-width: var(--page-width);
+}
+
+.method-description {
+  max-width: var(--page-width);
+  margin: 1.5rem auto 0;
+}
+
+/* 5. 결과표: 수치 / 행 / 열은 index.html의 <table>에서 수정 */
+.research-table {
+  background: transparent;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.research-table th,
+.research-table td {
+  padding: 0.75rem 0.9rem;
+  vertical-align: middle;
+  text-align: center !important;
+  white-space: nowrap;
+}
+
+.research-table th:first-child { text-align: left !important; }
+.research-table tbody th { font-weight: 400; }
+.research-table thead { border-top: 2px solid #363636; }
+.research-table tbody tr:last-child { border-bottom: 2px solid #363636; }
+.research-table .ours-row { background: var(--ours-background); }
+.research-table .ours-row th { font-weight: 700; }
+
+.research-table caption {
+  caption-side: bottom;
+  text-align: left;
+  padding-top: 0.75rem;
+  font-size: 0.85rem;
+  white-space: normal;
+}
+
+.table-container { margin-top: 1.5rem; }
+
+.compact-table {
+  max-width: 800px;
+  margin-inline: auto;
+}
+
+.result-note {
+  font-size: 0.85rem;
+  line-height: 1.65;
+  max-width: var(--page-width);
+  margin: 1rem auto 0;
+}
+
+/* 6. BibTeX / 출처 */
+.citation-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.copy-status { font-size: 0.8rem; }
+
+.bibtex-code {
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  tab-size: 2;
+}
+
+.footer .content {
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+/* 7. 모바일: 표는 표 영역 안에서만 가로 스크롤됩니다. */
+@media screen and (max-width: 768px) {
+  :root {
+    --title-size: 34px;
+    --section-space: 2.5rem;
+  }
+
+  .hero-body { padding: 2.5rem 1.25rem; }
+  .section { padding-inline: 1.25rem; }
+  .content.has-text-justified { text-align: left !important; }
+  .research-table { font-size: 0.85rem; }
+
+  .research-table th,
+  .research-table td {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .footer { padding: 2.5rem 1.25rem; }
+}
+
+@media screen and (max-width: 360px) {
+  :root { --title-size: 30px; }
+}
