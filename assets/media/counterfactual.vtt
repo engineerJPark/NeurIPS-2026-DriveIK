@@ -1,0 +1,25 @@
+WEBVTT
+
+1
+00:00:00.300 --> 00:00:05.593
+The appendix inserts the same vehicle at five placements, varying position and size.
+
+2
+00:00:05.593 --> 00:00:11.900
+In this example, Near and Far shorten our trajectory much more than the sky insertions.
+
+3
+00:00:12.300 --> 00:00:17.816
+Far and SkyFar use the same sprite scale of 0.5. Only the insertion position changes.
+
+4
+00:00:17.816 --> 00:00:23.900
+With the same noise seeds, Ours responds more strongly to the road placement in this example.
+
+5
+00:00:24.300 --> 00:00:31.341
+At the same sprite scale, mean absolute endpoint change is 1.81 m on the road versus 1.04 m in the sky.
+
+6
+00:00:31.341 --> 00:00:35.900
+Far produces a larger absolute response than SkyFar in 65.5% of paired frames.

@@ -1,0 +1,137 @@
+WEBVTT
+
+1
+00:00:00.300 --> 00:00:04.373
+A driving model can see the road, yet barely react when the scene changes.
+
+2
+00:00:04.373 --> 00:00:06.900
+How do we make vision matter for planning?
+
+3
+00:00:07.300 --> 00:00:11.500
+Insert a vehicle directly ahead, while keeping ego status and commands fixed.
+
+4
+00:00:11.500 --> 00:00:15.900
+Existing models barely change their trajectories. This paper calls it blind planning.
+
+5
+00:00:16.300 --> 00:00:20.000
+Many training examples are predictable from motion and route commands alone.
+
+6
+00:00:20.000 --> 00:00:23.900
+Direct trajectory supervision can reward that shortcut, leaving visual evidence underused.
+
+7
+00:00:24.300 --> 00:00:29.770
+The key idea is inspired by inverse kinematics: anchor an action to a start and a target.
+
+8
+00:00:29.770 --> 00:00:31.900
+Here, both anchors are visual states.
+
+9
+00:00:32.300 --> 00:00:36.130
+Three cameras feed a vision encoder and a compact language model.
+
+10
+00:00:36.130 --> 00:00:41.900
+The model uses motion and route context to predict future visual tokens, rather than future pixels.
+
+11
+00:00:42.300 --> 00:00:47.564
+A separate diffusion network turns the current and predicted visual states into a trajectory.
+
+12
+00:00:47.564 --> 00:00:51.900
+Ego status and commands have no direct path into this decoder.
+
+13
+00:00:52.300 --> 00:00:55.517
+Future-state supervision trains the visual representation, alongside scene question answering.
+
+14
+00:00:55.517 --> 00:00:59.900
+Trajectory gradients stop at the conditioning tokens, separating visual learning from diffusion learning.
+
+15
+00:01:00.300 --> 00:01:03.664
+Obstacle insertion shortens the average 3-second endpoint by 1.04 m.
+
+16
+00:01:03.664 --> 00:01:07.900
+Ours decelerates on 63.8% of perturbed samples, compared with 44.2% for Baseline.
+
+17
+00:01:08.300 --> 00:01:13.593
+The appendix inserts the same vehicle at five placements, varying position and size.
+
+18
+00:01:13.593 --> 00:01:19.900
+In this example, Near and Far shorten our trajectory much more than the sky insertions.
+
+19
+00:01:20.300 --> 00:01:25.816
+Far and SkyFar use the same sprite scale of 0.5. Only the insertion position changes.
+
+20
+00:01:25.816 --> 00:01:31.900
+With the same noise seeds, Ours responds more strongly to the road placement in this example.
+
+21
+00:01:32.300 --> 00:01:39.341
+At the same sprite scale, mean absolute endpoint change is 1.81 m on the road versus 1.04 m in the sky.
+
+22
+00:01:39.341 --> 00:01:43.900
+Far produces a larger absolute response than SkyFar in 65.5% of paired frames.
+
+23
+00:01:44.300 --> 00:01:49.000
+Across this left turn, our predicted path follows the green ground-truth trajectory more closely.
+
+24
+00:01:49.000 --> 00:01:53.900
+Selected clip mean ADE: Baseline 6.00 m → Ours 0.30 m. Lower is better.
+
+25
+00:01:54.300 --> 00:01:59.162
+At this intersection, our prediction follows the right turn while Baseline diverges from the reference.
+
+26
+00:01:59.162 --> 00:02:03.900
+Selected clip mean ADE: Baseline 3.02 m → Ours 0.15 m. Lower is better.
+
+27
+00:02:04.300 --> 00:02:09.162
+In this urban sequence, our predicted trajectory better matches the reference path and travel distance.
+
+28
+00:02:09.162 --> 00:02:13.900
+Selected clip mean ADE: Baseline 2.34 m → Ours 0.10 m. Lower is better.
+
+29
+00:02:14.300 --> 00:02:19.000
+In this nighttime sequence, our predicted path stays closer to the green ground-truth trajectory.
+
+30
+00:02:19.000 --> 00:02:23.900
+Selected clip mean ADE: Baseline 2.40 m → Ours 0.18 m. Lower is better.
+
+31
+00:02:24.300 --> 00:02:30.124
+A 0.5B LLM backbone reaches 92.2 PDMS on NAVSIM-v1 and 90.6 EPDMS on NAVSIM-v2.
+
+32
+00:02:30.124 --> 00:02:34.900
+Gains over the matched Baseline: +19.0 PDMS and +20.4 EPDMS points.
+
+33
+00:02:35.300 --> 00:02:37.321
+Grounding Driving VLA via Inverse Kinematics.
+
+34
+00:02:37.321 --> 00:02:41.900
+A visual-state interface for more responsive planning, using cameras and a compact backbone.

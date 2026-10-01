@@ -1,0 +1,33 @@
+WEBVTT
+
+1
+00:00:00.300 --> 00:00:05.000
+Across this left turn, our predicted path follows the green ground-truth trajectory more closely.
+
+2
+00:00:05.000 --> 00:00:09.900
+Selected clip mean ADE: Baseline 6.00 m → Ours 0.30 m. Lower is better.
+
+3
+00:00:10.300 --> 00:00:15.162
+At this intersection, our prediction follows the right turn while Baseline diverges from the reference.
+
+4
+00:00:15.162 --> 00:00:19.900
+Selected clip mean ADE: Baseline 3.02 m → Ours 0.15 m. Lower is better.
+
+5
+00:00:20.300 --> 00:00:25.162
+In this urban sequence, our predicted trajectory better matches the reference path and travel distance.
+
+6
+00:00:25.162 --> 00:00:29.900
+Selected clip mean ADE: Baseline 2.34 m → Ours 0.10 m. Lower is better.
+
+7
+00:00:30.300 --> 00:00:35.000
+In this nighttime sequence, our predicted path stays closer to the green ground-truth trajectory.
+
+8
+00:00:35.000 --> 00:00:39.900
+Selected clip mean ADE: Baseline 2.40 m → Ours 0.18 m. Lower is better.
