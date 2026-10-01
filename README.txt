@@ -101,6 +101,7 @@ assets/figures/         논문 그림과 원본 PDF
 assets/media/           영상 3종, 포스터, WebVTT 자막
 assets/paper.pdf         제공된 논문 PDF
 assets/data/provenance.json  논문 / 미디어 출처
+assets/data/media-manifest.json  최신 영상 / 자막 / 포스터의 원본 파일과 SHA-256
 THIRD_PARTY.txt          템플릿 출처와 변경 내역
 scripts/verify_page.py  선택적 브라우저 검증 (Playwright + Chrome 필요)
 

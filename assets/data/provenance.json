@@ -8,7 +8,7 @@
   "experiment": "Supplied ResearchStudio Reel assets/source/stitching_data.js. Exact saved six-waypoint predictions, K=50 means. Two illustrative cases, not dataset averages.",
   "comparison": "Signed change in 3 s endpoint range: norm(after endpoint) - norm(before endpoint). x=right, y=forward, meters. Aggregate results n=6019.",
   "size_control": "Far and SkyFar share scale 0.5; other variants vary placement and size.",
-  "media": "Existing ResearchStudio Reel MP4 files copied unchanged. Driving examples include interpolated playback between source camera frames and saved trajectory predictions; selected-clip metrics are not benchmark averages.",
+  "media": "Latest top-level ResearchStudio Reel exports, copied byte-for-byte. The overview uses the revised opening and original paper architecture figures. Driving and stitching standalone exports match the prior copies. Posters are converted from the corresponding source cover/previews; captions are converted from the matching SRT files. See media-manifest.json for source mappings and SHA-256 hashes.",
   "benchmark_sources": [
     "tables/navsim_v1_exp.tex",
     "tables/navsim_v2_exp.tex",

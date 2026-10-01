@@ -1,0 +1,51 @@
+{
+  "source_package": "ResearchStudio/ResearchStudio-Reel/_NeurIPS_2026__Driving_VLA",
+  "width": 1920,
+  "height": 840,
+  "fps": 30,
+  "audio": "silent",
+  "files": [
+    {
+      "id": "overview",
+      "video": "assets/media/overview.mp4",
+      "source_video": "video.mp4",
+      "sha256": "ea811a089bf2105c755a2c80f594ed25d512e1914dacfbddcfdd687c89a3af2a",
+      "bytes": 23731505,
+      "duration_seconds": 162,
+      "captions": "assets/media/overview.vtt",
+      "source_captions": "captions_en.srt",
+      "caption_sha256": "c4c29f37fc5c4ff967b7f7d92396f34445a2b1a4bf6c46ff2e03f26e240541c1",
+      "poster": "assets/media/overview-poster.webp",
+      "source_poster": "cover.png",
+      "poster_sha256": "4e0bfb0fd21c278804a6bf26b61d0c1edeefe2d750c094b05f5cc1918c4c4468"
+    },
+    {
+      "id": "driving",
+      "video": "assets/media/driving.mp4",
+      "source_video": "qualitative_results.mp4",
+      "sha256": "d217b93308841543927ad8bf5532d152b5d62e549564a0be261236d3bc27f23e",
+      "bytes": 15156187,
+      "duration_seconds": 40,
+      "captions": "assets/media/driving.vtt",
+      "source_captions": "captions_qualitative.srt",
+      "caption_sha256": "04f7c27e917fadf5da73b2d0c720f790a01d69e55248b368fa8fbd8f47b130eb",
+      "poster": "assets/media/driving-poster.webp",
+      "source_poster": "assets/previews/qualitative_00_qual_left.png",
+      "poster_sha256": "8a03dbb67585da031c9e2555f95856b2f94ad1c9b9873d55ebb39d8041037e60"
+    },
+    {
+      "id": "counterfactual",
+      "video": "assets/media/counterfactual.mp4",
+      "source_video": "stitching_results.mp4",
+      "sha256": "b30de6d0c234798c9286f187569b4e56e00327715d44d6055b74e30a9f1159b9",
+      "bytes": 2653121,
+      "duration_seconds": 36,
+      "captions": "assets/media/counterfactual.vtt",
+      "source_captions": "captions_stitching.srt",
+      "caption_sha256": "76ae57995f0d43d8f38d489003aa2f6cea5eb20101981aadccbf5afaef53751d",
+      "poster": "assets/media/counterfactual-poster.webp",
+      "source_poster": "assets/previews/stitching_00_stitch_positions.png",
+      "poster_sha256": "ac27fd26284c9e61e5c9d0c90e39c0675cd2f47a86de6e80aafddfdc10c68fe3"
+    }
+  ]
+}

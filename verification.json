@@ -9,8 +9,8 @@
     "No page overflow at six viewport widths, including 320 px; desktop/mobile screenshots",
     "No JavaScript errors, HTTP errors, or external runtime dependencies",
     "All content, results, and native video controls are available with JavaScript disabled",
-    "Full abstract matches the supplied Overleaf source",
-    "HTML citation matches the downloadable BibTeX file"
+    "Updated overview MP4 fully decodes without errors; opening and method scenes visually inspected",
+    "All video, caption, and poster SHA-256 hashes match the media manifest; 48 caption cues fall within their video durations"
   ],
   "console_errors": [],
   "http_errors": [],
