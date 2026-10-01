@@ -10,7 +10,7 @@ NTN 페이지(https://engineerjpark.github.io/CVPR2025NTN/)의 Bulma 템플릿�
    제목, 저자, 소속, Abstract, 그림, 영상, 결과표, BibTeX가 전부 여기 있습니다.
    편집기에서 다음 번호를 검색하면 해당 부분으로 이동합니다.
 
-   01. TITLE / AUTHORS / LINKS   제목, 저자, 소속, Paper/Video/BibTeX 버튼
+   01. TITLE / AUTHORS / LINKS   제목, 저자, 소속, Paper/Code/Video/BibTeX 버튼
    02. ABSTRACT                 Abstract와 Key Contributions
    03. OVERALL METHODS          방법 그림과 설명
    04. VIDEO OVERVIEW           전체 소개 영상
@@ -59,9 +59,11 @@ NTN 페이지(https://engineerjpark.github.io/CVPR2025NTN/)의 Bulma 템플릿�
   <section> ... </section> 전체를 복사하거나 옮기면 됩니다.
   새 섹션에는 고유한 id를 사용하고 aria-labelledby도 해당 제목 id에 맞춥니다.
 
-Code / arXiv 버튼 추가:
+Code / arXiv 버튼 수정:
+  Code 버튼은 https://github.com/engineerJPark/DriveIK 로 연결되어 있습니다.
+  공개 예정이므로 Code (coming soon)으로 표시하며, 공개 후 괄호 문구를 지우세요.
   상단의 <span class="link-block"> ... </span>을 복사하고 href와 버튼 글자를
-  바꾸면 됩니다. 현재는 확인된 코드 / arXiv URL이 없어 버튼을 넣지 않았습니다.
+  바꾸면 추가 버튼을 만들 수 있습니다. arXiv 버튼은 공개 주소가 정해지면 추가하세요.
 
 BibTeX 변경:
   HTML의 인용문과 다운로드 파일 assets/citation.bib를 함께 수정합니다.

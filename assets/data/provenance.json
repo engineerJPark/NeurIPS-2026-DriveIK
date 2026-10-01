@@ -15,7 +15,11 @@
     "tables/main_exp.tex",
     "tables/stitching_exp.tex"
   ],
-  "publication_status": "Preprint; no conference acceptance or public code URL is asserted.",
+  "publication_status": "Source manuscript: preprint. Displayed venue: NeurIPS 2026, as requested by the author. Code release is planned.",
+  "code_repository": {
+    "url": "https://github.com/engineerJPark/DriveIK",
+    "status": "coming soon"
+  },
   "presentation": "Static NTN/Bulma template. Original scientific figures and three existing videos are shown; benchmark values are directly editable HTML table cells.",
   "template": "https://engineerjpark.github.io/CVPR2025NTN/"
 }
